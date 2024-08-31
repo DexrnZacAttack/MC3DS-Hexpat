@@ -8,7 +8,7 @@ struct commonHeader {
     u16 unknown0;
     u16 unknown1;
 
-    u8 unknownBitmask; // USUALLY only has one bit set at a time, for some reaso
+    u8 unknownBitmask; // USUALLY only has one bit set at a time, for some reason
     padding[0xF];
     u32 BOM;
     padding[0x8];
