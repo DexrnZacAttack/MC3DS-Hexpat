@@ -12,11 +12,12 @@ struct commonHeader {
     u8 unknownBitmask; // USUALLY only has one bit set at a time, for some reaso
     padding[0xF];
     u32 BOM;
+    padding[0x8];
 };
 
 struct CDBHeader {
     commonHeader common;
-    padding[0x10];
+    padding[0x8];
     u32 unknown;
     u32 compressedSize;
     u32 decompressedSize;
