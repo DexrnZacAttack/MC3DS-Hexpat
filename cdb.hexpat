@@ -1,6 +1,6 @@
 #pragma author DexrnZacAttack
 #pragma description Minecraft 3DS Edition CDB files
-#pragma contributors PhoneticTeacher
+#pragma contributors Anonymous941
 
 #pragma endian little
 
