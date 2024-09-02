@@ -8,9 +8,11 @@ struct commonHeader {
     u16 unknown0;
     u16 unknown1;
 
-    u8 unknownBitmask; // USUALLY only has one bit set at a time, for some reason
-    padding[0xF];
-    u32 BOM;
+    u32 unknownBitmask; // USUALLY only has one bit set at a time, for some reason
+    s32 unknown2;
+    s32 entrySize; // size of the entry, after that there will either be EOF or another header
+    s32 unknown3;
+    u32 magic;
     padding[0x8];
 };
 
