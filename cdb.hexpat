@@ -3,17 +3,20 @@
 #pragma contributors Anonymous941
 #pragma endian little
 
-struct commonHeader {
-    // I think these are 16-bit, and are usually 1
-    u16 unknown0;
-    u16 unknown1;
+struct FileHeader {
+    // both are always 1
+    u16 something0;
+    u16 something1;
+    u32 subfileCount; // total number of subfiles
+    u32 unknown0;
+    u32 subfileSize; // size of each subfile
+    u32 unknown1;
+};
 
-    u32 unknownBitmask; // USUALLY only has one bit set at a time, for some reason
-    s32 unknown2;
-    s32 entrySize; // size of the entry, after that there will either be EOF or another header
-    s32 unknown3;
+struct SubfileHeader {
+    padding[sizeof(FileHeader)]; // the first subfile has a file header and the rest have garbage here
     u32 magic;
-    padding[0x8];
+    padding[0x8]; // unknown
 };
 
 struct ChunkSection {
@@ -24,8 +27,11 @@ struct ChunkSection {
 };
 
 struct ChunkHeader {
-    commonHeader common;
-    padding[0x4];
+    SubfileHeader subfileHeader;
+    u8 unknown0;
+    u8 unknown1;
+    u8 unknown2;
+    u8 unknown3;
     ChunkSection sections[6];
 };
 
@@ -33,5 +39,9 @@ struct Chunk {
     ChunkHeader header;
 };
 
-// there are multiple chunks per database, this only finds the first one for now
-Chunk chunk0 @ 0x00;
+FileHeader file @ 0;
+struct Test {
+    SubfileHeader common [[inline]];
+    padding[file.subfileSize - sizeof(common)];
+};
+Test entries[file.subfileCount] @ 0;
