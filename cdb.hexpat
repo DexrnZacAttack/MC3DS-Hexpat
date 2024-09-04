@@ -20,8 +20,8 @@ struct SubfileHeader {
 };
 
 struct ChunkSection {
-    s32 index; // -1 = empty
-    s32 unknown; // -1 = empty
+    s32 index; // -1 = empty    
+    s32 position; // -1 = empty; subtract 0xC to get the position within the chunk
     s32 compressedSize; // 0 = empty
     s32 decompressedSize; // 0 = empty
 };
