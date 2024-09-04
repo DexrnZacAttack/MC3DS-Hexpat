@@ -23,7 +23,7 @@ struct ChunkSection {
     s32 index; // -1 = empty
     s32 compressedSize; // -1 = empty
     s32 decompressedSize; // 0 = empty
-    u32 unknown;
+    s32 unknown; // 0 = empty
 };
 
 struct ChunkHeader {
