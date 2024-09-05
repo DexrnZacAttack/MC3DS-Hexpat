@@ -8,7 +8,7 @@ struct FileHeader {
     u16 something0;
     u16 something1;
     u32 subfileCount; // total number of subfiles
-    u32 unknown0;
+    u32 unknown0; // always 3
     u32 subfileSize; // size of each subfile
     u32 unknown1;
 };
@@ -16,32 +16,43 @@ struct FileHeader {
 struct SubfileHeader {
     padding[sizeof(FileHeader)]; // the first subfile has a file header and the rest have garbage here
     u32 magic;
-    padding[0x8]; // unknown
+    u8 unknown0[8];
+    u16 unknown1;
+    u16 unknown2;
 };
 
 struct ChunkSection {
     s32 index; // -1 = empty    
-    s32 position; // -1 = empty; subtract 0xC to get the position within the subfile
+    s32 position; // -1 = empty; subtract 0xC to get the position within the chunk
     s32 compressedSize; // 0 = empty
     s32 decompressedSize; // 0 = empty
 };
 
-struct ChunkHeader {
+struct CDBHeader {
     SubfileHeader subfileHeader;
-    u8 unknown0;
-    u8 unknown1;
-    u8 unknown2;
-    u8 unknown3;
     ChunkSection sections[6];
 };
 
-struct Chunk {
-    ChunkHeader header;
+enum Type : u16 {
+    normal,
+    map
+};
+
+struct VDBHeader {
+    SubfileHeader subfileHeader;
+    char name[subfileHeader.unknown0[0]];
+    u16 unknown1; // size-related
+    Type type; // normal = 0x0, map = 0x1
 };
 
 FileHeader file @ 0;
-struct Test {
-    SubfileHeader common [[inline]];
+struct CDB {
+    CDBHeader common [[inline]];
     padding[file.subfileSize - sizeof(common)];
 };
-Test entries[file.subfileCount] @ 0;
+struct VDB {
+    VDBHeader common [[inline]];
+    padding[file.subfileSize - sizeof(common)];
+};
+CDB entries[file.subfileCount] @ 0;
+//VDB entries[file.subfileCount] @ 0;
