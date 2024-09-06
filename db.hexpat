@@ -48,11 +48,11 @@ struct VDBHeader {
 FileHeader file @ 0;
 struct CDB {
     CDBHeader common [[inline]];
-    padding[file.subfileSize - sizeof(common)];
-};
+    u8 data[file.subfileSize - sizeof(common)] [[hidden]];
+} [[hex::visualize("hex_viewer", data)]];
 struct VDB {
     VDBHeader common [[inline]];
-    padding[file.subfileSize - sizeof(common)];
+    u8 data[file.subfileSize - sizeof(common)];
 };
 CDB entries[file.subfileCount] @ 0;
 //VDB entries[file.subfileCount] @ 0;
