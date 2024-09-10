@@ -1,26 +1,25 @@
 #pragma pattern_limit 200000
 struct IndexHeader {
-    u32 unknown0; // always 0x2
+    u32 version;
     u32 entryCount;
-    u32 unknown1;
+    u32 unknown0;
     u32 entrySize;
     u32 pointerCount;
-    u32 unknown2;
+    u32 unknown1;
 };
 struct IndexPointer {
     u32 unknown; // seems to be related to slt numbers
 };
 
 struct CDBEntry {
-    s8 unknown0; // x?
-    s8 unknown1; // z?
-    u16 unknown2; // how many blocks make up a row?
-    u16 slot; // slot (corresponds to a CDB file), unless it's <16?
-    u16 subfile; // subfile within the slot
+    u16 xBitfield;
+    u16 zBitfield;
+    u16 slotNumber; // slot number, unless it's <32?
+    u16 subfile;
     u16 constant0; // always 0x20FF
     u16 constant1; // always 0xA
-    u16 unknown4; // usually 0x1, sometimes 0x2 or 0x3, and on large worlds as high as 0x6e
-    u16 constant2; // always 0x8000, subfile count?
+    u16 unknown0; // usually 0x1, sometimes 0x2 or 0x3
+    u16 constant2; // always 0x8000, entry count?
 };
 
 struct VDBArray {
