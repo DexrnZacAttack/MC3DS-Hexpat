@@ -8,51 +8,58 @@ struct FileHeader {
     u16 something0;
     u16 something1;
     u32 subfileCount; // total number of subfiles
-    u32 unknown0; // always 3
+    u32 footerSize; // the footer seems to be all 0's
     u32 subfileSize; // size of each subfile
-    u32 unknown1;
+    u32 unknown0; // 0x4 for CDB, 0x100 for VDB
 };
 
-struct SubfileHeader {
+struct CDBSubfileHeader {
     padding[sizeof(FileHeader)]; // the first subfile has a file header and the rest have garbage here
     u32 magic;
-    u8 unknown0[8];
-    u16 unknown1;
-    u16 unknown2;
+    u8 unknown0[0x8]; // zero-terminated u8's?
+};
+
+struct VDBSubfileHeader {
+    padding[sizeof(FileHeader)];
+    u32 magic;
+    u16 nameSize;
+    padding[0x6];
+};
+
+struct VDBSubfile {
+    VDBSubfileHeader header;
+    u32 constant0; // always 0x6
+    char name[header.nameSize];
+    u32 nbtSize;
+    // NBT data
 };
 
 struct ChunkSection {
-    s32 index; // -1 = empty    
+    s32 index; // -1 = empty
     s32 position; // -1 = empty; subtract 0xC to get the position within the chunk
     s32 compressedSize; // 0 = empty
     s32 decompressedSize; // 0 = empty
+};  
+
+struct ChunkHeader {
+    CDBSubfileHeader subfileHeader;
+    u32 constant0; // always 0x3
+    ChunkSection sections[0x6];
 };
 
-struct CDBHeader {
-    SubfileHeader subfileHeader;
-    ChunkSection sections[6];
-};
-
-enum Type : u16 {
-    normal,
-    map
-};
-
-struct VDBHeader {
-    SubfileHeader subfileHeader;
-    char name[subfileHeader.unknown0[0]];
-    u16 unknown1; // size-related
-    Type type; // normal = 0x0, map = 0x1
+struct Chunk {
+    ChunkHeader header;
 };
 
 FileHeader file @ 0;
-struct CDB {
-    CDBHeader common [[inline]];
-    u8 data[file.subfileSize - sizeof(common)] [[hidden]];
-} [[hex::visualize("hex_viewer", data)]];
-struct VDB {
-    VDBHeader common [[inline]];
-    u8 data[file.subfileSize - sizeof(common)];
+struct CDBTest {
+    ChunkHeader common [[inline]];
+    padding[file.subfileSize - sizeof(common)];
 };
-CDB entries[file.subfileCount] @ 0;
-//VDB entries[file.subfileCount] @ 0;
+struct VDBTest {
+    VDBSubfile common [[inline]];
+    padding[file.subfileSize - sizeof(common)];
+};
+// uncomment to choose CDB or VDB
+//CDBTest entries[file.subfileCount] @ 0;
+//VDBTest entries[file.subfileCount] @ 0;
