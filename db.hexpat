@@ -1,10 +1,10 @@
 #pragma author DexrnZacAttack
-#pragma description Minecraft 3DS Edition CDB files
 #pragma contributors Anonymous941
+#pragma description Minecraft 3DS Edition CDB/VDB files
 #pragma endian little
 
 struct FileHeader {
-    // both are always 1
+    // both are always 1, version?
     u16 something0;
     u16 something1;
     u32 subfileCount; // total number of subfiles
@@ -28,10 +28,10 @@ struct VDBSubfileHeader {
 
 struct VDBSubfile {
     VDBSubfileHeader header;
-    u32 constant0; // always 0x6
+    u32 unknown0;
     char name[header.nameSize];
     u32 nbtSize;
-    // NBT data
+    u8 nbt[nbtSize];
 };
 
 struct ChunkSection {
